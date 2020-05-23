@@ -1,12 +1,13 @@
 package models
 
-import "go-api/dao"
+import (
+	"go-api/dao"
+)
 
 //类型要大写
-type Register struct {
-	Telephone string `json:"telephone"`
-	Password  string `json:"password"`
-	Username  string `json:"username"`
+type UserParamsReq struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 //不能命名为UserId,如此严格
@@ -22,6 +23,12 @@ func QueryUser()(userInfo *User,err error)  {
 	if err = dao.DB.First(&userInfo).Error; err != nil{
 		return nil, err
 	}
+	return
+}
+//保存用户信息
+func SaveUser(userRegister *UserParamsReq)(err error)  {
+	user :=User{Username:userRegister.Username,Password:userRegister.Password,Telephone:""}
+	err = dao.DB.Create(&user).Error
 	return
 }
 //数组

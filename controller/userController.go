@@ -1,39 +1,39 @@
 package controller
 
 import (
-	"fmt"
-	"go-api/models"
 	"github.com/gin-gonic/gin"
+	"go-api/models"
 	"net/http"
 )
-type UserParamsReq struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Telephone string `json:"telephone"`
-}
-func Login(c *gin.Context)  {
-	userInfo,err := models.QueryUser()
-	if err!= nil {
-		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
-	}else {
-		c.JSON(http.StatusOK, userInfo)
-	}
-}
 
-func Register(c *gin.Context)  {
-	var userParams UserParamsReq
-	userInfo,err := models.QueryUser()
+func Login(c *gin.Context)  {
+	var userParams models.UserParamsReq
 	c.BindJSON(&userParams)
-	fmt.Println(userInfo)
-	fmt.Println(userParams)
+	userInfo,err := models.QueryUser()
 	if err!= nil {
 		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
 		return
 	}
-	if userParams.Username==userInfo.Username&& userParams.Password==userInfo.Password&&userParams.Telephone==userInfo.Telephone {
-		c.JSON(http.StatusOK, gin.H{"message":"注册成功"})
+	if userParams.Username==userInfo.Username&& userParams.Password==userInfo.Password {
+		c.JSON(http.StatusOK, gin.H{"message":"登录成功"})
 	}else {
 		c.JSON(http.StatusOK, gin.H{"message":"账号或密码错误"})
+	}
+}
+
+func Register(c *gin.Context)  {
+	var userParams models.UserParamsReq
+	c.BindJSON(&userParams)
+	userInfo,err := models.QueryUser()
+	if err!= nil {
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
+		return
+	}
+	if userParams.Username==userInfo.Username{
+		c.JSON(http.StatusOK, gin.H{"message":"账号已存在"})
+	}else {
+		models.SaveUser(&userParams)
+		c.JSON(http.StatusOK, gin.H{"message":"注册成功"})
 	}
 }
 
