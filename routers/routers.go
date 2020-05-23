@@ -29,7 +29,7 @@ func SetupRouter() *gin.Engine{
 	v1 := r.Group("/api/v1")
 	{
 		v1.POST("user/login", controller.Login)
-		v1.POST("user/register", controller.Login)
+		v1.POST("user/register", controller.Register)
 		v1.POST("user/queryUserList", controller.QueryUserList)
 	}
 	return r
