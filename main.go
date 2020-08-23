@@ -16,7 +16,7 @@ func main() {
 	}
 	defer dao.Close()  // 程序退出关闭数据库连接
 	// 模型绑定
-	dao.DB.AutoMigrate(&models.Todo{})
+	dao.DB.AutoMigrate(&models.Todo{},&models.User{})
 	// 注册路由
 	r := routers.SetupRouter()
 	r.Run(":9001")
