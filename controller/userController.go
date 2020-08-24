@@ -6,6 +6,23 @@ import (
 	"net/http"
 )
 
+type HeaderType struct {
+	RetCode string `json:"retCode"`
+	ErrorNum string `json:"errorNum"`
+	ErrorMsg string `json:"errorMsg"`
+}
+type BodyTypeSub struct {
+	Message string `json:"message"`
+}
+
+type responseType struct {
+	Header HeaderType `json:"header"`
+	Body BodyTypeSub `json:"body"`
+}
+type ResponseTypeNoBody struct {
+	Header HeaderType `json:"header"`
+}
+
 func Login(c *gin.Context) {
 	var userParams models.UserParamsReq
 	c.BindJSON(&userParams)
@@ -25,12 +42,19 @@ func Register(c *gin.Context) {
 	var userParams models.UserParamsReq
 	c.BindJSON(&userParams)
 	_, err := models.QueryUser(userParams.Username)
+
+	var response ResponseTypeNoBody
+	response.Header.RetCode = "0"
 	if err != nil {
 		models.SaveUser(&userParams)
-		c.JSON(http.StatusOK, gin.H{"message": "注册成功"})
+		response.Header.ErrorNum = "0"
+		response.Header.ErrorMsg = "注册成功"
+		c.JSON(http.StatusOK, response)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "账号已存在"})
+	response.Header.ErrorNum = "1"
+	response.Header.ErrorMsg = "账号已存在"
+	c.JSON(http.StatusOK, response)
 }
 
 func QueryUserList(c *gin.Context) {
